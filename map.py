@@ -7,7 +7,7 @@ import pygame as pg
 class Map(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        st.map_settings("circle_19")
+        st.map_settings("circle_en")
 
         self.map_tiles = st.map_tiles
         self.i = st.available_i[0]
@@ -37,7 +37,6 @@ def draw_map(tmap):
             if x == "00":
                 continue
             color, color1 = get_color(x)
-
             if x == "11":
                 enemies.append((i, j))
             if x == "10":

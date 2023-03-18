@@ -1,5 +1,5 @@
 import settings as st
-
+from random import random
 import pygame as pg
 import numpy as np
 
@@ -158,7 +158,7 @@ def circle_map(radius):
             if pos == 0:
                 tiles_map += "3"
             elif pos <= radius**2:
-                tiles_map += "1"
+                tiles_map += "1" if random() > 0.2 else "4"
             elif pos <= (radius+1)**2:
                 tiles_map += "2"
             else:
