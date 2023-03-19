@@ -1,4 +1,3 @@
-from enemy import spawn_enemies
 import settings as st
 from levels import MonsterSpawner
 import pygame as pg
