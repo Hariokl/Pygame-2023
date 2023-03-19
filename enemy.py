@@ -3,7 +3,7 @@ import pygame as pg
 
 
 class Enemy(pg.sprite.Sprite):
-    def __init__(self, pos):
+    def __init__(self, pos, hp):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((st.TILES_WH // 1.5, st.TILES_WH // 1.5))
         self.image.fill((250, 100, 100))
@@ -17,7 +17,7 @@ class Enemy(pg.sprite.Sprite):
         st.positions[self.i] = pos
         st.enemies_rects.append(self)
 
-        self.hp = 30
+        self.hp = hp
 
     def update(self):
         # positions
@@ -95,8 +95,8 @@ class Enemy(pg.sprite.Sprite):
         st.positions[self.i] += ((x + ox) * v, (y + oy) * v)
 
 
-def spawn_enemies(positions):
+def spawn_enemies(positions, monster_hp):
     for x in positions:
         pos = st.positions[0][0] + x[0] * st.TILES_WH, st.positions[0][1] + x[1] * st.TILES_WH
-        Enemy(pos)
+        Enemy(pos, monster_hp)
 

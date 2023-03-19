@@ -1,6 +1,6 @@
 from enemy import spawn_enemies
 import settings as st
-
+from levels import MonsterSpawner
 import pygame as pg
 
 
@@ -13,13 +13,12 @@ class Map(pg.sprite.Sprite):
         self.i = st.available_i[0]
         st.available_i.remove(self.i)
 
-        tmap, enemies, player_pos = draw_map(self.map_tiles)
+        tmap, player_pos = draw_map(self.map_tiles)
 
         self.image = tmap
         self.rect = self.image.get_rect()
 
         st.all_sprites.add(self)
-        spawn_enemies(enemies)
         st.positions -= player_pos
 
     def update(self):
@@ -38,7 +37,7 @@ def draw_map(tmap):
                 continue
             color, color1 = get_color(x)
             if x == "11":
-                enemies.append((i, j))
+                MonsterSpawner((i, j))
             if x == "10":
                 player_pos = i*st.TILES_WH - st.WIDTH // 2 + st.TILES_WH // 2, \
                              j*st.TILES_WH - st.HEIGHT // 2 + st.TILES_WH // 2
@@ -63,7 +62,7 @@ def draw_map(tmap):
             #                            j*st.TILES_WH, twh * right * up * (tmap[j - 1][i + 1] in asX), twh))
             # pg.draw.rect(map, color1, (i*st.TILES_WH+twh * (1 - left * down * (tmap[j + 1][i - 1] in asX)),
             #                            (j+1)*st.TILES_WH - twh, twh * left * down * (tmap[j + 1][i - 1] in asX), twh))
-    return map, enemies, player_pos
+    return map, player_pos
 
 
 # return colors based on type of tile

@@ -49,6 +49,6 @@ def get_time(who):
     mate = list_of_who[who]
     list_of_who[who] = time()
     if mate is None:
-        return
-    return mate - list_of_who[who]
+        return 0
+    return list_of_who[who] - mate
 

@@ -2,6 +2,7 @@ import pygame as pg
 from numpy import sqrt
 
 import settings as st
+from levels import Level
 from map import Map
 
 
@@ -13,6 +14,8 @@ class Game:
         self.map = Map()
         self.player = Player()
         self.enemies = []
+        # TODO: don't forget to change this!
+        Level()
         self.run()
 
     # I think this run function is the cleanest one in my whole life :D
@@ -20,13 +23,17 @@ class Game:
         while True:
             check_event(self)
 
-            st.display.fill((0, 0, 0))
-            st.all_sprites.update()
-            st.all_sprites.draw(st.display)
+            self.update()
 
             pg.display.flip()
             self.clock.tick(st.FPS)
             pg.display.set_caption(str(int(self.clock.get_fps())))
+
+    def update(self):
+        st.display.fill((0, 0, 0))
+        st.all_sprites.update()
+        st.all_sprites.draw(st.display)
+        Level.level.update()
 
 
 # here I check every event that has occurred, quite straightforwardly, isn't it?
@@ -53,7 +60,6 @@ def check_event(game):
                 x = sqrt(2) / 2 * x
                 y = sqrt(2) / 2 * y
             game.player.running = x, y
-            print(game.player.running)
 
         # continuing the movement
         if event.type == pg.KEYUP:
