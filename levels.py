@@ -4,7 +4,7 @@ import settings as st
 from enemy import Enemy, spawn_enemies
 
 
-# Call Level() when entering the level. Right after drawing the level.
+# Call Level() when entering new level. Right after drawing the level.
 class Level:
     level = None
 
