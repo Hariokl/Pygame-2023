@@ -33,12 +33,12 @@ class Level:
 class MonsterSpawner:
     monsterSpawners = []
 
-    # TODO: need to change this method of updating
+    # TODO: need to change this method of updating because it's very slow
     def __init__(self, t_pos):
         self.t_pos = t_pos
         MonsterSpawner.monsterSpawners.append(self)
 
     def update(self):
-        if Level.level.monsters_spawn_time <= 0:
+        if Level.level.monsters_spawn_time <= 0 and len(st.available_i) > 100:
             if random() <= Level.level.spawn_rate:
                 spawn_enemies([self.t_pos], Level.level.monsters_hp)

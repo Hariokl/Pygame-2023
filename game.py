@@ -2,6 +2,7 @@ import pygame as pg
 from numpy import sqrt
 
 import settings as st
+import draw_gui
 from levels import Level
 from map import Map
 
@@ -11,12 +12,17 @@ class Game:
         # was forced to put import here since it's the easiest way to avoid error
         from player import Player
         self.clock = pg.time.Clock()
-        self.map = Map()
+        draw_gui.setup()
+        self.draw()
         self.player = Player()
         self.enemies = []
         # TODO: don't forget to change this!
         Level()
         self.run()
+
+    def draw(self):
+        self.map = Map()
+        draw_gui.diff_bar()
 
     # I think this run function is the cleanest one in my whole life :D
     def run(self):
@@ -33,6 +39,7 @@ class Game:
         st.display.fill((0, 0, 0))
         st.all_sprites.update()
         st.all_sprites.draw(st.display)
+        st.display.blit(draw_gui.update(), (0, 0))
         Level.level.update()
 
 

@@ -4,8 +4,9 @@ from time import time
 
 
 def init():
-    global WIDTH, HEIGHT, TILES_WH, FPS, display, positions, all_sprites, max_i, available_i, enemies_rects, list_of_who
-    WIDTH, HEIGHT = 640*1.5, 480*1.5
+    global WIDTH, HEIGHT, TILES_WH, FPS, display, positions, all_sprites, max_i, available_i, enemies_rects, list_of_who, gui_display
+    WIDTH = 640*1.5
+    HEIGHT = WIDTH * 0.75
     TILES_WH = max(WIDTH, HEIGHT) // 10 // 1.2
     FPS = 60
 
@@ -13,6 +14,8 @@ def init():
     n = 100 * 10
 
     display = pg.display.set_mode((WIDTH, HEIGHT))
+    gui_display = pg.Surface((WIDTH, HEIGHT), pg.SRCALPHA, 32)
+    gui_display = gui_display.convert_alpha()
     positions = np.full((n, 2), (0., 0.))
     all_sprites = pg.sprite.Group()
     max_i = n
