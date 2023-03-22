@@ -5,12 +5,11 @@ import settings as st
 import draw_gui
 from levels import Level
 from map import Map
+from player import Player
 
 
 class Game:
     def __init__(self):
-        # was forced to put import here since it's the easiest way to avoid error
-        from player import Player
         self.clock = pg.time.Clock()
         draw_gui.setup()
         self.draw()
