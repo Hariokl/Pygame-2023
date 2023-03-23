@@ -3,12 +3,19 @@ import pygame as pg
 
 
 class Enemy(pg.sprite.Sprite):
+
     def __init__(self, pos, hp):
+        # import map
+        # global map
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((st.TILES_WH // 1.5, st.TILES_WH // 1.5))
         self.image.fill((250, 100, 100))
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
+        self.mask = pg.mask.from_surface(self.image)
+
+        self.time_county = 0  # delete this after optimizations
+        self.last_vxy = 0, 0
 
         self.i = st.available_i[0]
         st.available_i.remove(self.i)
@@ -18,6 +25,8 @@ class Enemy(pg.sprite.Sprite):
         st.enemies_rects.append(self)
 
         self.hp = hp
+        self.max_hp = hp
+        self.act_max_hp = hp * 10
 
     def update(self):
         # positions
@@ -29,7 +38,7 @@ class Enemy(pg.sprite.Sprite):
         x, y = 0, 0
 
         # this is detect-radius, and if enemy is in it, then move
-        radius = st.TILES_WH * 8
+        radius = st.TILES_WH * 20
         if x1 ** 2 + y1 ** 2 <= radius ** 2:
             # here "5" is constant for false-detection (or however it's called)
             if abs(x1) > 5:
@@ -41,25 +50,49 @@ class Enemy(pg.sprite.Sprite):
         # update the position
         self.rect.topleft = st.positions[self.i]
 
+        self.get_stronger()
+
+    def get_stronger(self):
+        mhp = self.max_hp
+        self.max_hp = min(self.max_hp + self.max_hp / st.FPS / 100 * 2, self.act_max_hp)
+        self.hp += self.max_hp - mhp
+
     def take_damage(self, dmg):
         self.hp -= dmg
         if self.hp <= 0:
             self.destroy()
 
     def destroy(self):
+        from levels import Level
         # need to change this
         st.available_i.append(self.i)
         st.available_i = sorted(list(set(st.available_i)))
         #
+        Level.level.number_of_monsters -= 1
         st.positions[self.i] = st.positions[0]
         st.all_sprites.remove(self)
         st.enemies_rects.remove(self)
         self.kill()
 
+    # Used to be with Borders
+    # def new_move(self, x, y):
+    #     for i, border in enumerate([map.Borders.b_borders, map.Borders.t_borders, map.Borders.r_borders, map.Borders.l_borders]):
+    #         if pg.sprite.collide_mask(self, border):
+    #             x += x ** 2 * (1 if i == 3 else (-1 if i == 2 else 0))
+    #             y += y ** 2 * (1 if i == 1 else (-1 if i == 0 else 0))
+    #     v = max(st.TILES_WH // 30, 1)
+    #     st.positions[self.i] += x * v, y * v
+
     def move(self, x, y):
         # preparations
         v = max(st.TILES_WH // 30, 1)
         offset = st.TILES_WH // 10
+
+        if self.time_county <= 3:
+            st.positions[self.i] += self.last_vxy[0]*v, self.last_vxy[1]*v
+            self.time_county += 1
+            return
+        self.time_county -= 3
 
         # player's and board's pos
         left, top, right, bottom = *self.rect.topleft, *self.rect.bottomright
@@ -93,10 +126,10 @@ class Enemy(pg.sprite.Sprite):
             oy -= 1
 
         st.positions[self.i] += ((x + ox) * v, (y + oy) * v)
+        self.last_vxy = ((x + ox), (y + oy))
 
 
 def spawn_enemies(positions, monster_hp):
     for x in positions:
         pos = st.positions[0][0] + x[0] * st.TILES_WH, st.positions[0][1] + x[1] * st.TILES_WH
         Enemy(pos, monster_hp)
-

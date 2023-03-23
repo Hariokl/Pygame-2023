@@ -158,7 +158,8 @@ def circle_map(radius):
             if pos == 0:
                 tiles_map += "3"
             elif pos <= radius**2:
-                tiles_map += "1" if random() > 0.2 else "4"
+                tiles_map += "1" if random() / pos * radius ** 2> 0.2 else "4"
+                print(0.2*pos / radius ** 2)
             elif pos <= (radius+1)**2:
                 tiles_map += "2"
             else:
@@ -177,6 +178,7 @@ def save_map(func=circle_map, radius=10):
 
 def map_convertor(*args):
     # here I find borders of map
+    left, right, top, bottom = None, None, None, None
     for j, y in enumerate(positions):
         for i, x in enumerate(y):
             if x is None:

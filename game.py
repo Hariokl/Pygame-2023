@@ -38,6 +38,10 @@ class Game:
         st.display.fill((0, 0, 0))
         st.all_sprites.update()
         st.all_sprites.draw(st.display)
+
+        # Borders.all_sprites.update()
+        # Borders.all_sprites.draw(st.display)
+
         st.display.blit(draw_gui.update(), (0, 0))
         Level.level.update()
 
