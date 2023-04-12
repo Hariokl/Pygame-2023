@@ -30,11 +30,7 @@ class Player(pg.sprite.Sprite):
     def update(self):
         self.weapon.update()
 
-    def move(self, x, y, with_speed=True):
-        # for teleportation which I still haven't started doing :D
-        if not with_speed:
-            st.positions += (x, y)
-            return
+    def move(self, x, y):
         # preparations
         v = max(st.TILES_WH * 3 // st.FPS, 1)
         offset = st.TILES_WH // 10 // 1.5
