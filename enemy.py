@@ -89,6 +89,8 @@ class Enemy(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
 
     def take_damage(self, dmg):
+        if not self.spawn_stop:
+            return
         self.hp -= dmg
         if self.hp <= 0:
             self.destroy()
