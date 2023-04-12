@@ -21,7 +21,6 @@ class Game:
 
     def draw(self):
         self.map = Map()
-        draw_gui.diff_bar()
 
     # I think this run function is the cleanest one in my whole life :D
     def run(self):

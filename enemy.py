@@ -4,6 +4,7 @@ import pygame as pg
 
 class Enemy(pg.sprite.Sprite):
     number_of_enemies = 0
+    number_of_killed = 0
 
     def __init__(self, pos, hp):
         # import map
@@ -37,6 +38,8 @@ class Enemy(pg.sprite.Sprite):
         print(f"\r{Enemy.number_of_enemies}", end="")
 
     def update(self):
+        self.get_stronger()
+
         # positions
         center = st.WIDTH // 2, st.HEIGHT // 2
         pos = self.rect.center
@@ -57,8 +60,6 @@ class Enemy(pg.sprite.Sprite):
 
         # update the position
         self.rect.topleft = st.positions[self.i]
-
-        self.get_stronger()
 
     def get_stronger(self):
         if self.level == self.max_level:
@@ -96,6 +97,7 @@ class Enemy(pg.sprite.Sprite):
         st.all_sprites.remove(self)
         st.enemies_rects.remove(self)
         Enemy.number_of_enemies -= 1
+        Enemy.number_of_killed += 1
         self.kill()
 
     # Used to be with Borders

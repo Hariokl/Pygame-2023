@@ -4,7 +4,7 @@ from time import time
 
 
 def init():
-    global WIDTH, HEIGHT, TILES_WH, FPS, display, positions, all_sprites, max_i, available_i, enemies_rects, list_of_who, gui_display, TICK
+    global WIDTH, HEIGHT, TILES_WH, FPS, display, positions, all_sprites, max_i, available_i, enemies_rects, list_of_who, gui_display, TICK, font30, font60
     WIDTH = 640*1.5
     HEIGHT = WIDTH * 0.75
     TILES_WH = max(WIDTH, HEIGHT) // 10 // 1.2
@@ -23,6 +23,10 @@ def init():
     available_i = [i for i in range(n)]
     enemies_rects = list()
     list_of_who = {"level": None}
+
+    pg.font.init()
+    font30 = pg.font.SysFont('Comic Sans MS', 30)
+    font60 = pg.font.SysFont('Comic Sans MS', 60)
 
 
 def map_settings(map_name):
