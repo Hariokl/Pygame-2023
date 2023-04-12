@@ -1,3 +1,4 @@
+import effects
 import settings as st
 import pygame as pg
 
@@ -10,8 +11,8 @@ class Enemy(pg.sprite.Sprite):
         # import map
         # global map
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((st.TILES_WH // 1.5, st.TILES_WH // 1.5))
-        self.image.fill((250, 100, 100))
+        self.image = pg.Surface((st.TILES_WH // 1.5, st.TILES_WH // 1.5), pg.SRCALPHA, 32).convert_alpha()
+        self.image.fill((0, 0, 0, 0))
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
         self.mask = pg.mask.from_surface(self.image)
@@ -33,11 +34,17 @@ class Enemy(pg.sprite.Sprite):
         self.hp = hp
         self.max_hp = hp
 
+        self.spawn_stop = False
+
         Enemy.number_of_enemies += 1
 
-        print(f"\r{Enemy.number_of_enemies}", end="")
-
     def update(self):
+        self.time += st.TICK
+        if not self.spawn_stop:
+            effects.spawn_mob(self)
+            self.rect.topleft = st.positions[self.i]
+            return
+
         self.get_stronger()
 
         # positions
@@ -64,7 +71,6 @@ class Enemy(pg.sprite.Sprite):
     def get_stronger(self):
         if self.level == self.max_level:
             return
-        self.time += st.TICK
         exp = self.time * 10
         if self.exp <= exp:
             self.level_up()

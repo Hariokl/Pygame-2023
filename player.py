@@ -11,6 +11,11 @@ class Player(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((st.TILES_WH // 1.5, st.TILES_WH // 1.5))
         self.image.fill((20, 20, 250))
+
+        # treeImage = pg.image.load("images/therock.png")
+        # treeImage = pg.transform.scale(treeImage, (st.TILES_WH // 1.5, st.TILES_WH // 1.5))
+        # self.image.blit(treeImage, (0, 0))
+
         self.rect = self.image.get_rect()
         self.rect.center = st.WIDTH // 2, st.HEIGHT // 2
 
