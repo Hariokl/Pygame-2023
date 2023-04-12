@@ -11,7 +11,7 @@ def init():
     FPS = 60
 
     # number of different objects on map at the same time
-    n = 100 * 10
+    n = 4 * 1000
 
     display = pg.display.set_mode((WIDTH, HEIGHT))
     gui_display = pg.Surface((WIDTH, HEIGHT), pg.SRCALPHA, 32)

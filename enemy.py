@@ -28,6 +28,8 @@ class Enemy(pg.sprite.Sprite):
         self.max_hp = hp
         self.act_max_hp = hp * 10
 
+        print("Spawn Mob")
+
     def update(self):
         # positions
         center = st.WIDTH // 2, st.HEIGHT // 2

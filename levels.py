@@ -9,18 +9,19 @@ class Level:
     level = None
 
     def __init__(self):
-        self.spawn_rate = 0.05  # for practical
-        # self.spawn_rate = 1  # for tests
+        self.spawn_rate = 0.1
         self.level = 1
         self.time = 0
 
-        self.max_number_of_monsters = 50
+        self.max_number_of_monsters = 3000
         self.number_of_monsters = 0
         self.number_of_kills = 100
         self.monsters_standard_hp = 10
         self.monsters_hp = self.monsters_standard_hp
         self.amplifier = 1.01
-        self.monsters_spawn_time = 10  # 10 * 0.99**x
+        self.spawn_max_per_frame = 2
+        self.spawn_per_frame = 0
+        self.monsters_spawn_time = 1  # 10 * 0.99**x
         # y = 10 / ( x / 100 + 1) - func to measure time to spawn monster
         Level.level = self
 
@@ -31,10 +32,10 @@ class Level:
         self.monsters_spawn_time -= time_passed
         if self.monsters_spawn_time <= 0:
             self.monsters_hp = (self.monsters_standard_hp * self.level) * self.amplifier ** self.time
-            self.spawn_rate = 1 - 0.985 ** self.time  # for practical
-            # self.spawn_rate = 1  # for tests
+            # self.spawn_rate = 1 - 0.985 ** self.time
             [ms.update() for ms in MonsterSpawner.monsterSpawners]
-            self.monsters_spawn_time = 10 / (self.time / 150 + 1)
+            self.monsters_spawn_time = 4 / (self.time / 150 + 1)
+            self.spawn_per_frame = 0
 
 
 class MonsterSpawner:
@@ -53,7 +54,12 @@ class MonsterSpawner:
         # if not (((st.WIDTH // 2 - self.t_pos[0]*st.TILES_WH) // st.TILES_WH) ** 2 + \
         #         ((st.HEIGHT // 2 - self.t_pos[1]*st.TILES_WH) // st.TILES_WH) ** 2 <= radius):
         #     return
+
+        # if level.spawn_per_frame >= level.spawn_max_per_frame:
+        #     return
+        # level.spawn_per_frame += 1
+        where = ((self.t_pos[0] - st.WIDTH // st.TILES_WH) ** 2 + (self.t_pos[1] - st.HEIGHT // st.TILES_WH) ** 2) / 10
         if level.number_of_monsters < level.max_number_of_monsters:
-            if random() <= level.spawn_rate:
+            if random() * where <= level.spawn_rate:
                 spawn_enemies([self.t_pos], level.monsters_hp)
                 level.number_of_monsters += 1
