@@ -3,6 +3,7 @@ import pygame as pg
 
 
 class Enemy(pg.sprite.Sprite):
+    number_of_enemies = 0
 
     def __init__(self, pos, hp):
         # import map
@@ -16,6 +17,7 @@ class Enemy(pg.sprite.Sprite):
 
         self.time_county = 0  # delete this after optimizations
         self.last_vxy = 0, 0
+        self.time = 0
 
         self.i = st.available_i[0]
         st.available_i.remove(self.i)
@@ -24,11 +26,15 @@ class Enemy(pg.sprite.Sprite):
         st.positions[self.i] = pos
         st.enemies_rects.append(self)
 
+        self.level = 1
+        self.max_level = 5
+        self.exp = 100
         self.hp = hp
         self.max_hp = hp
-        self.act_max_hp = hp * 10
 
-        print("Spawn Mob")
+        Enemy.number_of_enemies += 1
+
+        print(f"\r{Enemy.number_of_enemies}", end="")
 
     def update(self):
         # positions
@@ -55,9 +61,25 @@ class Enemy(pg.sprite.Sprite):
         self.get_stronger()
 
     def get_stronger(self):
-        mhp = self.max_hp
-        self.max_hp = min(self.max_hp + self.max_hp / st.FPS / 100 * 2, self.act_max_hp)
-        self.hp += self.max_hp - mhp
+        if self.level == self.max_level:
+            return
+        self.time += st.TICK
+        exp = self.time * 10
+        if self.exp <= exp:
+            self.level_up()
+
+    def level_up(self):
+        self.level += 1
+        self.hp *= 1.25
+        self.max_hp *= 1.25
+        self.exp = self.level * 100
+        self.time = 0
+
+        self.change_self_color((255 - (self.level - 1) * 40, 100 - (self.level - 1) * 20, 100 - (self.level - 1) * 20))
+
+    def change_self_color(self, color):
+        self.image.fill(color)
+        self.rect = self.image.get_rect()
 
     def take_damage(self, dmg):
         self.hp -= dmg
@@ -70,10 +92,10 @@ class Enemy(pg.sprite.Sprite):
         st.available_i.append(self.i)
         st.available_i = sorted(list(set(st.available_i)))
         #
-        Level.level.number_of_monsters -= 1
         st.positions[self.i] = st.positions[0]
         st.all_sprites.remove(self)
         st.enemies_rects.remove(self)
+        Enemy.number_of_enemies -= 1
         self.kill()
 
     # Used to be with Borders

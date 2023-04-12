@@ -4,11 +4,12 @@ from time import time
 
 
 def init():
-    global WIDTH, HEIGHT, TILES_WH, FPS, display, positions, all_sprites, max_i, available_i, enemies_rects, list_of_who, gui_display
+    global WIDTH, HEIGHT, TILES_WH, FPS, display, positions, all_sprites, max_i, available_i, enemies_rects, list_of_who, gui_display, TICK
     WIDTH = 640*1.5
     HEIGHT = WIDTH * 0.75
     TILES_WH = max(WIDTH, HEIGHT) // 10 // 1.2
     FPS = 60
+    TICK = 1 / FPS
 
     # number of different objects on map at the same time
     n = 4 * 1000

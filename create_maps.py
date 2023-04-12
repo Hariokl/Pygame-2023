@@ -158,7 +158,7 @@ def circle_map(radius):
             if pos == 0:
                 tiles_map += "3"
             elif pos <= radius**2:
-                tiles_map += "1" if random() / pos * radius ** 2> 0.2 else "4"
+                tiles_map += "1" if random() > 0.2 else "4"
                 print(0.2*pos / radius ** 2)
             elif pos <= (radius+1)**2:
                 tiles_map += "2"
@@ -210,4 +210,4 @@ if __name__ == "__main__":
     # st.init()
     # init()
     # Create_Map()
-    save_map(radius=19)
+    save_map(radius=15)

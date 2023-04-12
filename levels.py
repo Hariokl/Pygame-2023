@@ -9,12 +9,13 @@ class Level:
     level = None
 
     def __init__(self):
-        self.spawn_rate = 0.1
         self.level = 1
+        self.wave = 1
         self.time = 0
 
-        self.max_number_of_monsters = 3000
-        self.number_of_monsters = 0
+        self.spawn_rate = 0.1
+        self.max_number_of_monsters_per_wave = 10
+        self.number_of_monsters_per_wave = 0
         self.number_of_kills = 100
         self.monsters_standard_hp = 10
         self.monsters_hp = self.monsters_standard_hp
@@ -31,6 +32,11 @@ class Level:
         self.time += time_passed
         self.monsters_spawn_time -= time_passed
         if self.monsters_spawn_time <= 0:
+            if self.number_of_monsters_per_wave == self.max_number_of_monsters_per_wave and Enemy.number_of_enemies == 0:
+                self.wave += 1
+                self.max_number_of_monsters_per_wave = 10 * self.wave
+                self.number_of_monsters_per_wave = 0
+                print("Wave number", self.wave)
             self.monsters_hp = (self.monsters_standard_hp * self.level) * self.amplifier ** self.time
             # self.spawn_rate = 1 - 0.985 ** self.time
             [ms.update() for ms in MonsterSpawner.monsterSpawners]
@@ -48,18 +54,9 @@ class MonsterSpawner:
 
     def update(self):
         level = Level.level
-        # radius = 15 ** 2
-        # print(((st.WIDTH // 2 - self.t_pos[0]*st.TILES_WH) // st.TILES_WH) ** 2 + \
-        #         ((st.HEIGHT // 2 - self.t_pos[1]*st.TILES_WH) // st.TILES_WH) ** 2, radius)
-        # if not (((st.WIDTH // 2 - self.t_pos[0]*st.TILES_WH) // st.TILES_WH) ** 2 + \
-        #         ((st.HEIGHT // 2 - self.t_pos[1]*st.TILES_WH) // st.TILES_WH) ** 2 <= radius):
-        #     return
-
-        # if level.spawn_per_frame >= level.spawn_max_per_frame:
-        #     return
-        # level.spawn_per_frame += 1
         where = ((self.t_pos[0] - st.WIDTH // st.TILES_WH) ** 2 + (self.t_pos[1] - st.HEIGHT // st.TILES_WH) ** 2) / 10
-        if level.number_of_monsters < level.max_number_of_monsters:
+        if level.number_of_monsters_per_wave < level.max_number_of_monsters_per_wave:
             if random() * where <= level.spawn_rate:
                 spawn_enemies([self.t_pos], level.monsters_hp)
-                level.number_of_monsters += 1
+                level.number_of_monsters_per_wave += 1
+
