@@ -30,9 +30,8 @@ class Level:
 
     def update(self):
         # print(f"\r{self.number_of_monsters}", end="")
-        time_passed = st.get_time("level")
-        self.time += time_passed
-        self.monsters_spawn_time -= time_passed
+        self.time += st.TICK
+        self.monsters_spawn_time -= st.TICK
         if self.monsters_spawn_time <= 0:
             if self.number_of_monsters_per_wave == self.max_number_of_monsters_per_wave and enemy.Enemy.number_of_enemies == 0:
                 self.update_wave()

@@ -52,11 +52,11 @@ def map_settings(map_name):
             map_tiles.append([translate[x] for x in line])
 
 
-# need to change the list_of_who method
-def get_time(who):
-    mate = list_of_who[who]
-    list_of_who[who] = time()
-    if mate is None:
-        return 0
-    return list_of_who[who] - mate
+# # need to change the list_of_who method
+# def get_time(who):
+#     mate = list_of_who[who]
+#     list_of_who[who] = time()
+#     if mate is None:
+#         return 0
+#     return list_of_who[who] - mate
 
