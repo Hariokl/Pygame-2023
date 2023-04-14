@@ -1,3 +1,4 @@
+import A_star
 import effects
 import settings as st
 import pygame as pg
@@ -14,7 +15,8 @@ class Enemy(pg.sprite.Sprite):
         self.image = pg.Surface((st.TILES_WH // 1.5, st.TILES_WH // 1.5), pg.SRCALPHA, 32).convert_alpha()
         self.image.fill((0, 0, 0, 0))
         self.rect = self.image.get_rect()
-        self.rect.topleft = pos
+        pos = pos[0] + st.TILES_WH // 2, pos[1] + st.TILES_WH // 2
+        self.rect.center = pos
         self.mask = pg.mask.from_surface(self.image)
 
         self.time_county = 0  # delete this after optimizations
@@ -35,6 +37,8 @@ class Enemy(pg.sprite.Sprite):
         self.max_hp = hp
 
         self.spawn_stop = False
+        self.way = None
+        self.last_way = None
 
         Enemy.number_of_enemies += 1
 
@@ -42,7 +46,7 @@ class Enemy(pg.sprite.Sprite):
         self.time += st.TICK
         if not self.spawn_stop:
             effects.spawn_mob(self)
-            self.rect.topleft = st.positions[self.i]
+            self.rect.center = st.positions[self.i]
             return
 
         self.get_stronger()
@@ -58,15 +62,16 @@ class Enemy(pg.sprite.Sprite):
         # this is detect-radius, and if enemy is in it, then move
         radius = st.TILES_WH * 20
         if x1 ** 2 + y1 ** 2 <= radius ** 2:
+            self.new_move()
             # here "5" is constant for false-detection (or however it's called)
-            if abs(x1) > 5:
-                x = 1 if x1 - 5 > 0 else -1
-            if abs(y1) > 5:
-                y = 1 if y1 - 5 > 0 else -1
-            self.move(x, y)
+            # if abs(x1) > 5:
+            #     x = 1 if x1 - 5 > 0 else -1
+            # if abs(y1) > 5:
+            #     y = 1 if y1 - 5 > 0 else -1
+            # self.move(x, y)
 
         # update the position
-        self.rect.topleft = st.positions[self.i]
+        self.rect.center = st.positions[self.i]
 
     def get_stronger(self):
         if self.level == self.max_level:
@@ -117,50 +122,65 @@ class Enemy(pg.sprite.Sprite):
     #     v = max(st.TILES_WH // 30, 1)
     #     st.positions[self.i] += x * v, y * v
 
-    def move(self, x, y):
-        # preparations
-        v = max(st.TILES_WH // 30, 1)
-        offset = st.TILES_WH // 10
-
-        if self.time_county <= 3:
-            st.positions[self.i] += self.last_vxy[0]*v, self.last_vxy[1]*v
-            self.time_county += 1
+    def new_move(self):
+        self_pos = st.pos_to_tiles_plus_check(st.positions[self.i])
+        if self_pos is not None:
+            self.way = A_star.a_star_algorithm(self_pos, st.pos_to_tiles((st.WIDTH // 2, st.HEIGHT // 2)))
+        if self.way is None:
             return
-        self.time_county -= 3
+        if len(self.way) == 1:
+            return
+        v = max(st.TILES_WH // 30, 1)
+        vx, vy = self.way[1][0] - self.way[0][0], self.way[1][1] - self.way[0][1]
+        if abs(vx+vy) != 1:
+            vx, vy = vx * 0.7, vy * 0.7
+        vx, vy = vx * v, vy * v
+        st.positions[self.i] += (vx, vy)
 
-        # player's and board's pos
-        left, top, right, bottom = *self.rect.topleft, *self.rect.bottomright
-        b_left, b_top = st.positions[0]
-
-        # positions and offset
-        t_bt = (top - b_top) / st.TILES_WH
-        b_bt = (bottom - b_top) / st.TILES_WH
-        l_bl = (left - b_left) / st.TILES_WH
-        r_bl = (right - b_left) / st.TILES_WH
-        offset_tiles = offset / st.TILES_WH
-
-        # hit wall? great, now go back, Monkey
-        ox, oy = 0, 0
-        if st.map_tiles[int(t_bt)][int(l_bl - offset_tiles)] == "02":
-            ox += 1
-        elif st.map_tiles[int(t_bt)][int(r_bl + offset_tiles)] == "02":
-            ox -= 1
-        elif st.map_tiles[int(b_bt)][int(l_bl - offset_tiles)] == "02":
-            ox += 1
-        elif st.map_tiles[int(b_bt)][int(r_bl + offset_tiles)] == "02":
-            ox -= 1
-
-        if st.map_tiles[int(t_bt - offset_tiles)][int(l_bl)] == "02":
-            oy += 1
-        elif st.map_tiles[int(b_bt + offset_tiles)][int(l_bl)] == "02":
-            oy -= 1
-        elif st.map_tiles[int(t_bt - offset_tiles)][int(r_bl)] == "02":
-            oy += 1
-        elif st.map_tiles[int(b_bt + offset_tiles)][int(r_bl)] == "02":
-            oy -= 1
-
-        st.positions[self.i] += ((x + ox) * v, (y + oy) * v)
-        self.last_vxy = ((x + ox), (y + oy))
+    # def move(self, x, y):
+    #     # preparations
+    #     v = max(st.TILES_WH // 30, 1)
+    #     offset = st.TILES_WH // 10
+    #
+    #     if self.time_county <= 3:
+    #         st.positions[self.i] += self.last_vxy[0]*v, self.last_vxy[1]*v
+    #         self.time_county += 1
+    #         return
+    #     self.time_county -= 3
+    #
+    #     # player's and board's pos
+    #     left, top, right, bottom = *self.rect.topleft, *self.rect.bottomright
+    #     b_left, b_top = st.positions[0]
+    #
+    #     # positions and offset
+    #     t_bt = (top - b_top) / st.TILES_WH
+    #     b_bt = (bottom - b_top) / st.TILES_WH
+    #     l_bl = (left - b_left) / st.TILES_WH
+    #     r_bl = (right - b_left) / st.TILES_WH
+    #     offset_tiles = offset / st.TILES_WH
+    #
+    #     # hit wall? great, now go back, Monkey
+    #     ox, oy = 0, 0
+    #     if st.map_tiles[int(t_bt)][int(l_bl - offset_tiles)] == "02":
+    #         ox += 1
+    #     elif st.map_tiles[int(t_bt)][int(r_bl + offset_tiles)] == "02":
+    #         ox -= 1
+    #     elif st.map_tiles[int(b_bt)][int(l_bl - offset_tiles)] == "02":
+    #         ox += 1
+    #     elif st.map_tiles[int(b_bt)][int(r_bl + offset_tiles)] == "02":
+    #         ox -= 1
+    #
+    #     if st.map_tiles[int(t_bt - offset_tiles)][int(l_bl)] == "02":
+    #         oy += 1
+    #     elif st.map_tiles[int(b_bt + offset_tiles)][int(l_bl)] == "02":
+    #         oy -= 1
+    #     elif st.map_tiles[int(t_bt - offset_tiles)][int(r_bl)] == "02":
+    #         oy += 1
+    #     elif st.map_tiles[int(b_bt + offset_tiles)][int(r_bl)] == "02":
+    #         oy -= 1
+    #
+    #     st.positions[self.i] += ((x + ox) * v, (y + oy) * v)
+    #     self.last_vxy = ((x + ox), (y + oy))
 
 
 def spawn_enemies(positions, monster_hp):

@@ -52,6 +52,26 @@ def map_settings(map_name):
             map_tiles.append([translate[x] for x in line])
 
 
+def tiles_to_pos(tile):
+    return positions[0][0] + tile[0] * TILES_WH, positions[0][1] + tile[1] * TILES_WH
+
+
+def pos_to_tiles_plus_check(pos):
+    pos2 = tiles_to_pos((int((pos[0] - positions[0][0]) // TILES_WH), int((pos[1] - positions[0][1]) // TILES_WH)))
+    pos2 = pos2[0] + TILES_WH // 2, pos2[1] + TILES_WH // 2
+    rad = TILES_WH // 30
+    if not check_in_rad(pos, pos2, rad):
+        return None
+    return int((pos[0] - positions[0][0]) // TILES_WH), int((pos[1] - positions[0][1]) // TILES_WH)
+
+def pos_to_tiles(pos):
+    return int((pos[0] - positions[0][0]) // TILES_WH), int((pos[1] - positions[0][1]) // TILES_WH)
+
+
+def check_in_rad(pos1, pos2, rad):
+    return ((pos2[0] - pos1[0]) ** 2 + (pos2[1] - pos1[1]) ** 2) <= rad
+
+
 # # need to change the list_of_who method
 # def get_time(who):
 #     mate = list_of_who[who]

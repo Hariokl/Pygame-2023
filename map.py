@@ -1,6 +1,7 @@
 import settings as st
 from levels import MonsterSpawner
 import pygame as pg
+import A_star
 
 
 class Map(pg.sprite.Sprite):
@@ -68,14 +69,16 @@ class Map(pg.sprite.Sprite):
 def draw_map(tmap):
     map = pg.Surface((len(tmap[0])*st.TILES_WH, len(tmap)*st.TILES_WH))
     twh = st.TILES_WH // 20
+    grid = [[0] * len(tmap[0]) for _ in range(len(tmap))]
     # borders = Borders(map.get_size())
     for j, y in enumerate(tmap):
         for i, x in enumerate(y):
             if x == "00":
                 continue
             color, color1 = get_color(x)
-            # if x == "02":
-            #     borders.draw_tiles_edges(i, j, twh)
+            grid[j][i] = 1
+            if x == "02":
+                grid[j][i] = 100  # here the bigger this value the fewer errors may occur
             if x == "11":
                 MonsterSpawner((i, j))
             if x == "10":
@@ -103,6 +106,7 @@ def draw_map(tmap):
             # pg.draw.rect(map, color1, (i*st.TILES_WH+twh * (1 - left * down * (tmap[j + 1][i - 1] in asX)),
             #                            (j+1)*st.TILES_WH - twh, twh * left * down * (tmap[j + 1][i - 1] in asX), twh))
     # borders.configuration()
+    A_star.setup(grid)
     return map, player_pos
 
 

@@ -207,7 +207,7 @@ def map_convertor(*args):
 
 
 if __name__ == "__main__":
-    # st.init()
-    # init()
-    # Create_Map()
-    save_map(radius=15)
+    st.init()
+    init()
+    Create_Map()
+    save_map(func=map_convertor)
