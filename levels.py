@@ -14,7 +14,7 @@ class Level:
         self.wave = 1
         self.time = 0
 
-        self.spawn_rate = 0.1 * 1000
+        self.spawn_rate = 0.1
         self.max_number_of_monsters_per_wave = 10
         self.number_of_monsters_per_wave = 0
         self.number_of_killed = 0
@@ -36,8 +36,8 @@ class Level:
             if self.number_of_monsters_per_wave == self.max_number_of_monsters_per_wave and enemy.Enemy.number_of_enemies == 0:
                 self.update_wave()
             self.monsters_hp = (self.monsters_standard_hp * self.level) * self.amplifier ** self.time
-            # self.spawn_rate = 1 - 0.985 ** self.time
             [ms.update() for ms in MonsterSpawner.monsterSpawners]
+            print(f"\r{self.number_of_monsters_per_wave}", end="")
             self.monsters_spawn_time = 4 / (self.time / 150 + 1)
             self.spawn_per_frame = 0
 
@@ -60,7 +60,6 @@ class MonsterSpawner:
     def update(self):
         level = Level.level
         where = ((self.t_pos[0] - st.WIDTH // st.TILES_WH) ** 2 + (self.t_pos[1] - st.HEIGHT // st.TILES_WH) ** 2) / 10
-        print(where)
         if level.number_of_monsters_per_wave < level.max_number_of_monsters_per_wave:
             if random() * where <= level.spawn_rate:
                 enemy.spawn_enemies([self.t_pos], level.monsters_hp)

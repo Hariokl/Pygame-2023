@@ -39,6 +39,7 @@ class Enemy(pg.sprite.Sprite):
         self.spawn_stop = False
         self.way = None
         self.last_way = None
+        self.player_was_at = None
 
         Enemy.number_of_enemies += 1
 
@@ -56,19 +57,10 @@ class Enemy(pg.sprite.Sprite):
         pos = self.rect.center
         x1, y1 = center[0] - pos[0], center[1] - pos[1]
 
-        # x- and y-movement
-        x, y = 0, 0
-
         # this is detect-radius, and if enemy is in it, then move
         radius = st.TILES_WH * 20
         if x1 ** 2 + y1 ** 2 <= radius ** 2:
             self.new_move()
-            # here "5" is constant for false-detection (or however it's called)
-            # if abs(x1) > 5:
-            #     x = 1 if x1 - 5 > 0 else -1
-            # if abs(y1) > 5:
-            #     y = 1 if y1 - 5 > 0 else -1
-            # self.move(x, y)
 
         # update the position
         self.rect.center = st.positions[self.i]
@@ -101,7 +93,6 @@ class Enemy(pg.sprite.Sprite):
             self.destroy()
 
     def destroy(self):
-        from levels import Level
         # need to change this
         st.available_i.append(self.i)
         st.available_i = sorted(list(set(st.available_i)))
@@ -113,74 +104,25 @@ class Enemy(pg.sprite.Sprite):
         Enemy.number_of_killed += 1
         self.kill()
 
-    # Used to be with Borders
-    # def new_move(self, x, y):
-    #     for i, border in enumerate([map.Borders.b_borders, map.Borders.t_borders, map.Borders.r_borders, map.Borders.l_borders]):
-    #         if pg.sprite.collide_mask(self, border):
-    #             x += x ** 2 * (1 if i == 3 else (-1 if i == 2 else 0))
-    #             y += y ** 2 * (1 if i == 1 else (-1 if i == 0 else 0))
-    #     v = max(st.TILES_WH // 30, 1)
-    #     st.positions[self.i] += x * v, y * v
-
     def new_move(self):
         self_pos = st.pos_to_tiles_plus_check(st.positions[self.i])
         if self_pos is not None:
-            self.way = A_star.a_star_algorithm(self_pos, st.pos_to_tiles((st.WIDTH // 2, st.HEIGHT // 2)))
-        if self.way is None:
+            player_at = st.pos_to_tiles((st.WIDTH // 2, st.HEIGHT // 2))
+            if self.player_was_at is None or self.player_was_at != player_at:
+                self.player_was_at = player_at
+                self.way = A_star.a_star_algorithm(self_pos, player_at)
+            else:
+                self.way = self.way[1:]
+        if not self.way:
             return
         if len(self.way) == 1:
             return
         v = max(st.TILES_WH // 30, 1)
         vx, vy = self.way[1][0] - self.way[0][0], self.way[1][1] - self.way[0][1]
         if abs(vx+vy) != 1:
-            vx, vy = vx * 0.7, vy * 0.7
+            vx, vy = vx * 0.8, vy * 0.8
         vx, vy = vx * v, vy * v
         st.positions[self.i] += (vx, vy)
-
-    # def move(self, x, y):
-    #     # preparations
-    #     v = max(st.TILES_WH // 30, 1)
-    #     offset = st.TILES_WH // 10
-    #
-    #     if self.time_county <= 3:
-    #         st.positions[self.i] += self.last_vxy[0]*v, self.last_vxy[1]*v
-    #         self.time_county += 1
-    #         return
-    #     self.time_county -= 3
-    #
-    #     # player's and board's pos
-    #     left, top, right, bottom = *self.rect.topleft, *self.rect.bottomright
-    #     b_left, b_top = st.positions[0]
-    #
-    #     # positions and offset
-    #     t_bt = (top - b_top) / st.TILES_WH
-    #     b_bt = (bottom - b_top) / st.TILES_WH
-    #     l_bl = (left - b_left) / st.TILES_WH
-    #     r_bl = (right - b_left) / st.TILES_WH
-    #     offset_tiles = offset / st.TILES_WH
-    #
-    #     # hit wall? great, now go back, Monkey
-    #     ox, oy = 0, 0
-    #     if st.map_tiles[int(t_bt)][int(l_bl - offset_tiles)] == "02":
-    #         ox += 1
-    #     elif st.map_tiles[int(t_bt)][int(r_bl + offset_tiles)] == "02":
-    #         ox -= 1
-    #     elif st.map_tiles[int(b_bt)][int(l_bl - offset_tiles)] == "02":
-    #         ox += 1
-    #     elif st.map_tiles[int(b_bt)][int(r_bl + offset_tiles)] == "02":
-    #         ox -= 1
-    #
-    #     if st.map_tiles[int(t_bt - offset_tiles)][int(l_bl)] == "02":
-    #         oy += 1
-    #     elif st.map_tiles[int(b_bt + offset_tiles)][int(l_bl)] == "02":
-    #         oy -= 1
-    #     elif st.map_tiles[int(t_bt - offset_tiles)][int(r_bl)] == "02":
-    #         oy += 1
-    #     elif st.map_tiles[int(b_bt + offset_tiles)][int(r_bl)] == "02":
-    #         oy -= 1
-    #
-    #     st.positions[self.i] += ((x + ox) * v, (y + oy) * v)
-    #     self.last_vxy = ((x + ox), (y + oy))
 
 
 def spawn_enemies(positions, monster_hp):

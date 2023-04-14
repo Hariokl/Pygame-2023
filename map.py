@@ -25,47 +25,6 @@ class Map(pg.sprite.Sprite):
         self.rect.topleft = st.positions[self.i]
 
 
-# class Borders(pg.sprite.Sprite):
-#     l_borders = pg.sprite.Sprite()
-#     t_borders = pg.sprite.Sprite()
-#     r_borders = pg.sprite.Sprite()
-#     b_borders = pg.sprite.Sprite()
-#     all_sprites = pg.sprite.Group()
-#
-#     def __init__(self, size):
-#         pg.sprite.Sprite.__init__(self)
-#
-#         for border in [Borders.b_borders, Borders.t_borders, Borders.r_borders, Borders.l_borders]:
-#             border.image = pg.Surface(size,  pg.SRCALPHA, 32).convert_alpha()
-#             border.image.fill((0, 0, 0, 0))
-#             Borders.all_sprites.add(border)
-#
-#         Borders.t_borders.image
-#
-#     def configuration(self):
-#         for border in [Borders.b_borders, Borders.t_borders, Borders.r_borders, Borders.l_borders]:
-#             border.rect = border.image.get_rect()
-#             border.mask = pg.mask.from_surface(border.image)
-#             border.update = self.update
-#             st.all_sprites.add(border)
-#
-#             border.i = st.available_i[0]
-#             st.available_i.remove(border.i)
-#
-#     def draw_tiles_edges(self, x, y, twh):
-#         tiles = st.TILES_WH
-#         xywh = [(tiles*x, tiles*(y+1)-twh, tiles, twh), (tiles*x, tiles*y, tiles, twh),
-#                 (tiles*(x+1)-twh, tiles*y, twh, tiles), (tiles*x, tiles*y, twh, tiles)]
-#         i = 0
-#         for border in [Borders.b_borders, Borders.t_borders, Borders.r_borders, Borders.l_borders]:
-#             pg.draw.rect(border.image, (0, 0, 0), xywh[i], 0)
-#             i += 1
-#
-#     def update(self):
-#         for border in [Borders.b_borders, Borders.t_borders, Borders.r_borders, Borders.l_borders]:
-#             border.rect.topleft = st.positions[0]
-
-
 def draw_map(tmap):
     map = pg.Surface((len(tmap[0])*st.TILES_WH, len(tmap)*st.TILES_WH))
     twh = st.TILES_WH // 20
@@ -78,7 +37,7 @@ def draw_map(tmap):
             color, color1 = get_color(x)
             grid[j][i] = 1
             if x == "02":
-                grid[j][i] = 100  # here the bigger this value the fewer errors may occur
+                grid[j][i] = 1000  # here the bigger this value the fewer errors may occur
             if x == "11":
                 MonsterSpawner((i, j))
             if x == "10":
@@ -87,24 +46,6 @@ def draw_map(tmap):
             pg.draw.rect(map, color, (i*st.TILES_WH, j*st.TILES_WH, st.TILES_WH, st.TILES_WH), 0)
             pg.draw.rect(map, color1, (i*st.TILES_WH+twh, j*st.TILES_WH+twh, st.TILES_WH-twh*2, st.TILES_WH-twh*2), 0)
 
-            # # left, right, up, down
-            # asX = associate[x]
-            # up, down, right, left = tmap[j - 1][i] in asX, tmap[j + 1][i] in asX, \
-            #                         tmap[j][i + 1] in asX, tmap[j][i - 1] in asX
-            # pg.draw.rect(map, color1, (i*st.TILES_WH+twh * (1 - left), j*st.TILES_WH+twh,
-            #                            st.TILES_WH - twh * (2 - right - left), st.TILES_WH - twh * 2))
-            # pg.draw.rect(map, color1, (i*st.TILES_WH+twh, j*st.TILES_WH+twh * (1 - up),
-            #                            st.TILES_WH - twh * 2, st.TILES_WH - twh * (2 - up - down)))
-            #
-            # # corners
-            # pg.draw.rect(map, color1, (i*st.TILES_WH+twh * (1 - left * up * (tmap[j - 1][i - 1] in asX)),
-            #                            j*st.TILES_WH, twh * left * up * (tmap[j - 1][i - 1] in asX), twh))
-            # pg.draw.rect(map, color1, ((i+1)*st.TILES_WH-twh * (down * right * (tmap[j + 1][i + 1] in asX)),
-            #                            (j+1)*st.TILES_WH - twh, twh * down * right * (tmap[j + 1][i + 1] in asX), twh))
-            # pg.draw.rect(map, color1, ((i+1)*st.TILES_WH-twh * (right * up * (tmap[j - 1][i + 1] in asX)),
-            #                            j*st.TILES_WH, twh * right * up * (tmap[j - 1][i + 1] in asX), twh))
-            # pg.draw.rect(map, color1, (i*st.TILES_WH+twh * (1 - left * down * (tmap[j + 1][i - 1] in asX)),
-            #                            (j+1)*st.TILES_WH - twh, twh * left * down * (tmap[j + 1][i - 1] in asX), twh))
     # borders.configuration()
     A_star.setup(grid)
     return map, player_pos

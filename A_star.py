@@ -7,8 +7,6 @@ def setup(grid_):
     graph = {}
     for y in range(len(grid)):
         for x in range(len(grid[y])):
-            # if grid[y][x] in [0, 100]:
-            #     continue
             graph[(x, y)] = graph.get((x, y), []) + get_neigh_nodes(x, y)
 
 
@@ -41,6 +39,7 @@ def a_star_algorithm(start, goal):
         if cur_node not in graph:
             print(cur_node, graph)
             print((int(cur_node[0]), int(cur_node[1])) in graph, i)
+
         neigh_nodes = graph[cur_node]
         for neigh in neigh_nodes:
             neigh_cost, neigh_node = neigh

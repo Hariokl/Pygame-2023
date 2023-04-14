@@ -57,6 +57,7 @@ class Projectile(pg.sprite.Sprite):
             if self.rect.colliderect(enemy.rect):
                 self.destroy()
                 enemy.take_damage(self.damage)
+                break
 
     def destroy(self):
         # need to change this

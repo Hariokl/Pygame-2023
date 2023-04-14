@@ -59,7 +59,7 @@ def tiles_to_pos(tile):
 def pos_to_tiles_plus_check(pos):
     pos2 = tiles_to_pos((int((pos[0] - positions[0][0]) // TILES_WH), int((pos[1] - positions[0][1]) // TILES_WH)))
     pos2 = pos2[0] + TILES_WH // 2, pos2[1] + TILES_WH // 2
-    rad = TILES_WH // 30
+    rad = TILES_WH // 40
     if not check_in_rad(pos, pos2, rad):
         return None
     return int((pos[0] - positions[0][0]) // TILES_WH), int((pos[1] - positions[0][1]) // TILES_WH)
