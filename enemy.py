@@ -14,6 +14,7 @@ class Enemy(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.image = pg.Surface((st.TILES_WH // 1.5, st.TILES_WH // 1.5), pg.SRCALPHA, 32).convert_alpha()
         self.image.fill((0, 0, 0, 0))
+        self.color = (250, 100, 100)
         self.rect = self.image.get_rect()
         pos = pos[0] + st.TILES_WH // 2, pos[1] + st.TILES_WH // 2
         self.rect.center = pos
@@ -37,6 +38,7 @@ class Enemy(pg.sprite.Sprite):
         self.max_hp = hp
 
         self.spawn_stop = False
+        self.die_stop = None
         self.way = None
         self.last_way = None
         self.player_was_at = None
@@ -49,6 +51,14 @@ class Enemy(pg.sprite.Sprite):
             effects.spawn_mob(self)
             self.rect.center = st.positions[self.i]
             return
+        if self.die_stop is not None:
+            if self.die_stop is False:
+                effects.die_mob(self)
+                self.rect.center = st.positions[self.i]
+                return
+            else:
+                self.destroy()
+                return
 
         self.get_stronger()
 
@@ -79,18 +89,21 @@ class Enemy(pg.sprite.Sprite):
         self.exp = self.level * 100
         self.time = 0
 
-        self.change_self_color((255 - (self.level - 1) * 40, 100 - (self.level - 1) * 20, 100 - (self.level - 1) * 20))
+        self.color = self.color[0] - 40, self.color[1] - 20, self.color[2] - 20
+
+        self.change_self_color(self.color)
 
     def change_self_color(self, color):
         self.image.fill(color)
         self.rect = self.image.get_rect()
 
     def take_damage(self, dmg):
-        if not self.spawn_stop:
+        if not self.spawn_stop or self.die_stop is not None:
             return
         self.hp -= dmg
         if self.hp <= 0:
-            self.destroy()
+            self.die_stop = False
+            self.time = 0
 
     def destroy(self):
         # need to change this

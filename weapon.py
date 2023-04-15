@@ -7,8 +7,8 @@ import settings as st
 class Weapon:
     def __init__(self):
         self.damage = 6
-        self.ammo_speed = 1
-        self.countdown_speed = 1 / st.FPS * 3
+        self.ammo_speed = 1.5
+        self.countdown_speed = st.TICK * 3
         self.countdown = 0
 
     def update(self):
@@ -19,7 +19,7 @@ class Weapon:
 
     def shoot(self):
         mouse_pos = pg.mouse.get_pos()
-        speed = st.TILES_WH // 10
+        speed = st.TILES_WH // 10 * self.ammo_speed
         x, y = (mouse_pos[0] - st.WIDTH // 2), (mouse_pos[1] - st.HEIGHT // 2)
 
         vx = x / abs(x ** 2 + y ** 2) ** 0.5 * speed

@@ -65,9 +65,10 @@ def check_event(game):
         if event.type == pg.KEYDOWN:
             x = (event.key == pg.K_d) - (event.key == pg.K_a) + game.player.running[0]
             y = (event.key == pg.K_s) - (event.key == pg.K_w) + game.player.running[1]
+            x, y = round(x), round(y)
             if x != 0 and y != 0:
-                x = sqrt(2) / 2 * x
-                y = sqrt(2) / 2 * y
+                x = 0.7 * x
+                y = 0.7 * y
             game.player.running = x, y
 
         # continuing the movement
@@ -86,7 +87,9 @@ def check_event(game):
             if keys[100]:
                 x += +1
             x, y = max(min(x, 1), -1), max(min(y, 1), -1)
-
+            if x != 0 and y != 0:
+                x = 0.7 * x
+                y = 0.7 * y
             game.player.running = x, y
 
     # move if you can >:)

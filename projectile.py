@@ -9,8 +9,9 @@ class Projectile(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         translater = {"linear": self.linear, "sinusoida": self.sinusoida}
 
-        self.image = pg.Surface((st.TILES_WH // 5, st.TILES_WH // 5))
-        self.image.fill((250, 205, 205))
+        self.image = pg.Surface((st.TILES_WH // 5, st.TILES_WH // 5), pg.SRCALPHA, 32).convert_alpha()
+        self.image.fill((0, 0, 0, 0))
+        pg.draw.circle(self.image, (200, 200, 200), (st.TILES_WH // 10, st.TILES_WH // 10), st.TILES_WH // 10)
         self.rect = self.image.get_rect()
         self.rect.center = pos
 
@@ -93,6 +94,9 @@ class Projectile(pg.sprite.Sprite):
     def move(self, xs, ys):
         x = xs * self.v[0] - ys * self.v[1]
         y = ys * self.v[0] + xs * self.v[1]
+        cur_st = -self.rect.centerx + st.positions[self.i][0], -self.rect.centery + st.positions[self.i][1]
+
+        self.start_pos = self.start_pos[0] + cur_st[0], self.start_pos[1] + cur_st[1]
 
         st.positions[self.i] = x + self.start_pos[0], y + self.start_pos[1]
 

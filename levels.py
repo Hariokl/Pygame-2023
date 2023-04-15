@@ -15,7 +15,7 @@ class Level:
         self.time = 0
 
         self.spawn_rate = 0.1
-        self.max_number_of_monsters_per_wave = 10
+        self.max_number_of_monsters_per_wave = 1
         self.number_of_monsters_per_wave = 0
         self.number_of_killed = 0
         self.number_of_kills = 100
