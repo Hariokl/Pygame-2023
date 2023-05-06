@@ -1,5 +1,6 @@
 import A_star
 import effects
+import player
 import settings as st
 import pygame as pg
 
@@ -36,9 +37,12 @@ class Enemy(pg.sprite.Sprite):
         self.exp = 100
         self.hp = hp
         self.max_hp = hp
+        self.damage_countdown = 1
+        self.damage = 1
 
         self.spawn_stop = False
         self.die_stop = None
+        self.is_alive = True
         self.way = None
         self.last_way = None
         self.player_was_at = None
@@ -75,6 +79,12 @@ class Enemy(pg.sprite.Sprite):
         # update the position
         self.rect.center = st.positions[self.i]
 
+        self.damage_countdown = max(self.damage_countdown - st.TICK, 0)
+        if self.damage_countdown == 0:
+            if self.rect.colliderect(player.Player.players[0].rect):
+                player.Player.players[0].take_damage(self.damage)
+                self.damage_countdown = 1
+
     def get_stronger(self):
         if self.level == self.max_level:
             return
@@ -102,8 +112,11 @@ class Enemy(pg.sprite.Sprite):
             return
         self.hp -= dmg
         if self.hp <= 0:
+            self.is_alive = False
             self.die_stop = False
             self.time = 0
+            Enemy.number_of_enemies -= 1
+            Enemy.number_of_killed += 1
 
     def destroy(self):
         # need to change this
@@ -113,8 +126,6 @@ class Enemy(pg.sprite.Sprite):
         st.positions[self.i] = st.positions[0]
         st.all_sprites.remove(self)
         st.enemies_rects.remove(self)
-        Enemy.number_of_enemies -= 1
-        Enemy.number_of_killed += 1
         self.kill()
 
     def new_move(self):

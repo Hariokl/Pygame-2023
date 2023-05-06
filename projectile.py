@@ -56,9 +56,10 @@ class Projectile(pg.sprite.Sprite):
         # look for collision with enemy, if there is then the enemy must be damaged >:D
         for enemy in st.enemies_rects:
             if self.rect.colliderect(enemy.rect):
-                self.destroy()
-                enemy.take_damage(self.damage)
-                break
+                if enemy.is_alive:
+                    enemy.take_damage(self.damage)
+                    self.destroy()
+                    break
 
     def destroy(self):
         # need to change this

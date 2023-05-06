@@ -50,6 +50,8 @@ def killed_enemy_count(scr):
 
 
 
+
+
 #
 # def gradient_rect(window, left_colour, right_colour, target_rect):
 #     """ Draw a horizontal-gradient filled rectangle covering <target_rect> """
