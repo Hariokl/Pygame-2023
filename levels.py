@@ -19,7 +19,7 @@ class Level:
         self.number_of_monsters_per_wave = 0
         self.number_of_killed = 0
         self.number_of_kills = 100
-        self.monsters_standard_hp = 10
+        self.monsters_standard_hp = 5
         self.monsters_hp = self.monsters_standard_hp
         self.amplifier = 1.01
         self.spawn_max_per_frame = 2

@@ -32,6 +32,7 @@ class Enemy(pg.sprite.Sprite):
         st.positions[self.i] = pos
         st.enemies_rects.append(self)
 
+        # stats
         self.level = 1
         self.max_level = 5
         self.exp = 100

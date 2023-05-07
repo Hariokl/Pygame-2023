@@ -97,5 +97,5 @@ def check_event(game):
         game.player.move(*game.player.running)
 
     # SHOOOOOOOOOOOT!!!!! >:D
-    if game.player.shoot_bool and game.player.weapon.countdown == 0:
+    if game.player.shoot_bool and game.player.make_damage_countdown == 0:
         game.player.shoot()

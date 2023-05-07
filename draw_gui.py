@@ -1,3 +1,4 @@
+import numpy as np
 import pygame as pg
 import settings as st
 import levels as lvls
@@ -5,9 +6,10 @@ import enemy
 
 
 def setup():
-    global diff_bar_dict
-    diff_bar_dict = {"wave_time": 3, "waveWH": (None, None),
+    global diff_bar_dict, a
+    diff_bar_dict = {"wave_time": 1, "waveWH": (None, None),
                      "killed_enemy_count": ((st.WIDTH / 40, st.WIDTH / 30), (st.WIDTH / 20 + st.WIDTH / 20, st.WIDTH / 30))}
+    a = np.pi / 510
 
 
 def update():
@@ -22,14 +24,14 @@ def update():
 
 
 def wave_update(scr):
-    diff_bar_dict["wave_time"] -= st.TICK
+    diff_bar_dict["wave_time"] -= st.TICK / 3
     wave = lvls.Level.level.wave
 
-    text_surface = st.font60.render(f"Wave {wave}", True, (250, 250, 250))  # , min(255 - diff_bar_dict["wave_time"] * 85, 0)
-    text_surface.set_alpha(max(diff_bar_dict["wave_time"] * 85, 0))
+    text_surface = st.font50.render(f"Wave {wave}", True, (250, 250, 250))  # , min(255 - diff_bar_dict["wave_time"] * 85, 0)
+    text_surface.set_alpha(max(255*np.sin(a*510*(1-diff_bar_dict["wave_time"])), 0))
 
     if diff_bar_dict["waveWH"] == (None, None):
-        diff_bar_dict["waveWH"] = st.WIDTH // 2 - text_surface.get_width() // 2, st.HEIGHT // 2 - text_surface.get_height() // 2
+        diff_bar_dict["waveWH"] = st.WIDTH // 2 - text_surface.get_width() // 2, st.HEIGHT // 10 - text_surface.get_height() // 2
 
     scr.blit(text_surface, diff_bar_dict["waveWH"])
 

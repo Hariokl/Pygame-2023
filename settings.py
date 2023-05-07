@@ -4,7 +4,7 @@ from time import time
 
 
 def init():
-    global WIDTH, HEIGHT, TILES_WH, FPS, display, positions, all_sprites, max_i, available_i, enemies_rects, list_of_who, gui_display, TICK, font30, font60
+    global WIDTH, HEIGHT, TILES_WH, FPS, display, positions, all_sprites, max_i, available_i, enemies_rects, list_of_who, gui_display, TICK, font30, font60, font50
     WIDTH = 640*1.5
     HEIGHT = WIDTH * 0.75
     TILES_WH = max(WIDTH, HEIGHT) // 10 // 1.2
@@ -26,6 +26,7 @@ def init():
 
     pg.font.init()
     font30 = pg.font.SysFont('Comic Sans MS', 30)
+    font50 = pg.font.SysFont('Comic Sans MS', 50)
     font60 = pg.font.SysFont('Comic Sans MS', 60)
 
 
